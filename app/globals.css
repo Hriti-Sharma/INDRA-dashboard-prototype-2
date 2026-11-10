@@ -67,9 +67,9 @@
 .toolbar label { color:var(--text-muted);font-size:15px;display:grid;gap:5px;min-width:140px; }
 .toolbar select { background:var(--card);color:var(--text-primary);border:1px solid var(--border);padding:7px 8px;outline:none;font-size:16px;width:170px;max-width:100%;height:40px; }
 .toolbar select:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
-.reset { font-size:16px;display:flex;gap:6px;align-items:center;white-space:nowrap;height:40px;width:170px;max-width:100%;margin-left:12px; }
+.reset { font-size:16px;display:flex;gap:6px;align-items:center;white-space:nowrap;height:40px;width:170px;max-width:100%;margin-left:12px;align-self:flex-end;border-radius:4px; }
 .searchable-select { color:var(--text-muted);font-size:15px;display:grid;gap:5px;min-width:140px; }
-.searchable-select-control { position:relative; display:flex; align-items:center; justify-content:space-between; padding:7px 8px; min-height:40px; }
+.searchable-select-control { position:relative; display:flex; align-items:center; justify-content:space-between; height:40px; }
 .searchable-select-input { background:var(--card);color:var(--text-primary);border:1px solid var(--border);padding:7px 8px;box-sizing:border-box;outline:none;font-size:16px;width:170px;max-width:100%;height:40px; }
 .searchable-select-input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
 .searchable-select-chevron { position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none; }
@@ -78,6 +78,8 @@
 .searchable-select-item:hover,.searchable-select-item[data-highlighted] { background:var(--surface);color:var(--text-primary); }
 .searchable-select-item[data-selected] { color:var(--cyan);font-weight:600; }
 
+
+.severity-select { color:var(--text-muted);font-size:15px;display:grid;gap:5px;min-width:140px; }
 
 /* ===== SEVERITY SELECT ===== */
 .severity-select-control {
@@ -90,9 +92,8 @@
   justify-content: space-between;
   padding: 7px 8px;
   font-size: 16px;
-  padding: 7px 8px;
   flex: 1;
-  min-height: 40px;
+  height: 40px;
 }
 
 .severity-select-input {
@@ -103,6 +104,7 @@
   font-size: 16px;
   padding: 7px 8px;
   flex: 1;
+  height: 40px;
   cursor: pointer;
 }
 
@@ -1218,7 +1220,7 @@ footer b{color:var(--cyan);}
   color: var(--text-muted);
 }
 .light .toolbar {
-  align-items: flex-start;
+  align-items: center;
   background: #F2F5F8;
   border-bottom: 1px solid var(--border);
 }
