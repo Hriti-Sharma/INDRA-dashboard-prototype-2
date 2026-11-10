@@ -1,0 +1,41 @@
+# v0 runtime files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+
+# Common ignores
+node_modules
+.next/
+# Environment files
+.env*.local
+# Debug / cache / build artifacts
+__pycache__/
+build/
+cache/
+dev/
+server/
+static/
+types/
+chunks/
+logs/
+# Generated config
+tsconfig.tsbuildinfo
+next-env.d.ts
+# Screenshots / snapshots
+screenshot_*.png
+# Helper scripts / fixes
+fix*.js
+fix*.py
+fix*.ps1
+inspect.py
+kindling_fix.py
+km.py
+# Temp / test outputs
+dev_output.txt
+env_vars.txt
+fullcss.txt
+gitdiff.txt
+gitfiles.txt
+psoutput.txt
+test_output.txt
+psoutput.txt
