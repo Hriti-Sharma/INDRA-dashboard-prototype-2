@@ -222,7 +222,7 @@
 .map-label.south{bottom:13px;right:15px}
 .legend {position:absolute;left:15px;bottom:14px;background:#0b1827dd;border:1px solid var(--border);padding:8px;display:flex;gap:10px;pointer-events:none;}
 .legend span{color:#93aabc;font-size:14px;text-transform:capitalize}
-.legend i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
 .legend i.critical,.severity-tag.critical{background:var(--critical)}
 .legend i.high,.severity-tag.high{background:var(--high)}
 .legend i.moderate,.severity-tag.moderate{background:var(--moderate)}
@@ -882,8 +882,8 @@ footer b{color:var(--cyan);}
   color: var(--text-secondary);
 }
 .light .legend i {
-  border: 2px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  width: 9px;
+  height: 9px;
 }
 
 /* Map attribution */
