@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import type { Incident } from '@/lib/types'
 import { projectCoord, projectPolygon, projectMultiPolygon, type BoundingBox } from '@/lib/geo'
 import {
@@ -8,15 +8,23 @@ import {
   loadIndiaBoundaries,
   type BoundaryCollection,
 } from '@/lib/boundaries'
+import { filterOptions } from '@/lib/data'
+import { useSharedFilters } from './FilterContext'
+
+function stripDiacritics(value: string): string {
+  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim()
+}
 
 export default function IntelligenceMap({
   incidents,
   selectedId,
   onSelect,
+  onClear,
 }: {
   incidents: Incident[]
   selectedId: number | null
   onSelect: (id: number) => void
+  onClear: () => void
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [geoData, setGeoData] = useState<BoundaryCollection | null>(null)
@@ -29,6 +37,21 @@ export default function IntelligenceMap({
   const dragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 })
   const [isBoundaryLoading, setIsBoundaryLoading] = useState(true)
   const [boundaryError, setBoundaryError] = useState<Error | null>(null)
+  const { setFilter } = useSharedFilters()
+
+  const stateByNormalizedName = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const state of filterOptions.state) {
+      map.set(stripDiacritics(state).toLowerCase(), state)
+    }
+    return map
+  }, [])
+
+  function handleStateSelect(name: string): void {
+    const key = stripDiacritics(name).toLowerCase()
+    const stateValue = stateByNormalizedName.get(key) ?? name
+    setFilter('state', stateValue)
+  }
 
   useEffect(() => {
     setIsBoundaryLoading(true)
@@ -80,7 +103,7 @@ export default function IntelligenceMap({
   }, [])
 
   const clearSelection = () => {
-    onSelect(0)
+    onClear()
   }
 
   const w = dims.width
@@ -135,6 +158,11 @@ export default function IntelligenceMap({
                 d={pathD}
                 className="state-path"
                 aria-label={feature.properties.name}
+                style={{ cursor: 'pointer' }}
+                onClick={e => {
+                  e.stopPropagation()
+                  handleStateSelect(feature.properties.name)
+                }}
               />
             )
           })}
@@ -158,7 +186,10 @@ export default function IntelligenceMap({
                 transform={`translate(${x},${y})`}
                 className={`marker-g ${inc.severity} ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`}
                 onMouseDown={e => e.stopPropagation()}
-                onClick={() => onSelect(inc.id)}
+                onClick={e => {
+                  e.stopPropagation()
+                  onSelect(inc.id)
+                }}
                 onMouseEnter={() => setHoveredId(inc.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 style={{ cursor: 'pointer' }}

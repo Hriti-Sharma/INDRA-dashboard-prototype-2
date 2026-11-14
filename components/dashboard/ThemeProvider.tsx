@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useLayoutEffect, useState, type ReactNode } from 'react'
 
 type Theme = 'dark' | 'light'
 
@@ -11,10 +11,29 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue>({ theme: 'dark', toggle: () => {} })
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
+const STORAGE_KEY = 'indra-theme'
 
-  useEffect(() => {
+function getSavedTheme(): Theme | null {
+  if (typeof window === 'undefined') {
+    return null
+  }
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY)
+    return saved === 'light' || saved === 'dark' ? saved : null
+  } catch {
+    return null
+  }
+}
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<Theme>(() => getSavedTheme() ?? 'light')
+
+  useLayoutEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, theme)
+    } catch {
+      // Ignore storage errors (e.g. private mode, quota exceeded)
+    }
     document.documentElement.classList.toggle('light', theme === 'light')
   }, [theme])
 

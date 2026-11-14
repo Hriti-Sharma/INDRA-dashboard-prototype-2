@@ -92,6 +92,7 @@ useEffect(() => {
         selectedId={selectedId}
         freshness={freshness}
         onSelect={setSelectedId}
+        reset={reset}
       />
 
       <KPISection incidents={filteredIncidents} />

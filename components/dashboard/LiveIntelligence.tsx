@@ -14,12 +14,14 @@ export default function LiveIntelligence({
   selectedId,
   onSelect,
   freshness,
+  reset,
 }: {
   incidents: Incident[]
   filters: FilterState
   selectedId: number | null
   onSelect: (id: number) => void
   freshness: FreshnessState
+  reset: () => void
 }) {
   const [navKey, setNavKey] = useState(0)
 
@@ -32,6 +34,11 @@ export default function LiveIntelligence({
     }
     onSelect(id)
   }, [incidents, onSelect])
+
+  const handleClear = useCallback(() => {
+    reset()
+    onSelect(0)
+  }, [reset, onSelect])
 
   const selected = incidents.find(i => i.id === selectedId) ?? null
 
@@ -49,6 +56,7 @@ export default function LiveIntelligence({
           incidents={incidents}
           selectedId={selectedId}
           onSelect={handleSelect}
+          onClear={handleClear}
         />
       </Panel>
       <Panel
