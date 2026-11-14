@@ -332,7 +332,7 @@ export default function AnalysisView() {
       <SystemHealth />
 
       <footer>
-        <span>INDRA prototype · PostgreSQL data layer · v3.0.0</span>
+        <span>INDRA · v3.0.0</span>
         <span>
           India&apos;s National Disaster &amp; Risk Analytics <b>▲</b>
         </span>

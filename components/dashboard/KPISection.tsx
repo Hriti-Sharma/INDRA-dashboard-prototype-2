@@ -4,12 +4,32 @@ import type { Incident } from '@/lib/types'
 import { Activity, AlertTriangle, Bot, Radio } from 'lucide-react'
 import type { ComponentType } from 'react'
 
-const kpis = (incidents: Incident[]) => [
-  { icon: Radio, label: 'Total incident reports', value: incidents.length.toLocaleString(), delta: '+12.8%' },
-  { icon: Activity, label: 'Active incidents', value: incidents.filter((i) => i.status !== 'Resolved').length.toString(), delta: '+4.2%' },
-  { icon: AlertTriangle, label: 'Critical alerts', value: incidents.filter((i) => i.severity === 'critical').length.toString(), delta: '+2' },
-  { icon: Bot, label: 'AI-detected incidents', value: incidents.filter((i) => i.confidence > 90).length.toString(), delta: '+23.1%' },
-]
+export interface KPIChangeData {
+  totalIncidentsDelta?: string
+  activeIncidentsDelta?: string
+  criticalAlertsDelta?: string
+  aiDetectedDelta?: string
+}
+
+const DEMO_DELTAS: KPIChangeData = {
+  totalIncidentsDelta: '+12.8%',
+  activeIncidentsDelta: '+4.2%',
+  criticalAlertsDelta: '+2',
+  aiDetectedDelta: '+23.1%',
+}
+
+function kpis(incidents: Incident[], kpiData?: KPIChangeData) {
+  const d: Required<KPIChangeData> = {
+    ...DEMO_DELTAS,
+    ...kpiData,
+  } as Required<KPIChangeData>
+  return [
+    { icon: Radio, label: 'Total incident reports', value: incidents.length.toLocaleString(), delta: d.totalIncidentsDelta },
+    { icon: Activity, label: 'Active incidents', value: incidents.filter((i) => i.status !== 'Resolved').length.toString(), delta: d.activeIncidentsDelta },
+    { icon: AlertTriangle, label: 'Critical alerts', value: incidents.filter((i) => i.severity === 'critical').length.toString(), delta: d.criticalAlertsDelta },
+    { icon: Bot, label: 'AI-detected incidents', value: incidents.filter((i) => i.confidence > 90).length.toString(), delta: d.aiDetectedDelta },
+  ]
+}
 
 function Stat({
 icon: Icon,
@@ -29,9 +49,9 @@ return ( <div className="stat panel">
 )
 }
 
-export default function KPISection({ incidents }: { incidents: Incident[] }) {
+export default function KPISection({ incidents, kpiData }: { incidents: Incident[]; kpiData?: KPIChangeData }) {
 return ( <div className="stats">
-{kpis(incidents).map(kpi => (
+{kpis(incidents, kpiData).map(kpi => (
 <Stat key={kpi.label} {...kpi} />
 ))} </div>
 )

@@ -220,7 +220,7 @@ export function adaptIncidentToDashboard(
     source: c.dataSource,
     reports: c.sourceCount,
     confidence: c.confidence ?? 0,
-    consensus: 'Medium',
+    consensus: c.consensus ?? 'Medium',
     independentSources: '0/0',
     status: c.status ?? 'Detected',
     impact: '',

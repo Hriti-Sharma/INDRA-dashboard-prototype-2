@@ -146,6 +146,7 @@ export interface CanonicalIncident {
   confidence?: number         // 0-100, optional
   sourceCount: number
   supportingSourceIds: string[]
+  consensus?: 'High' | 'Medium' | 'Low'  // backend-provided source verification/corroboration
   status?: LifecycleStage
   value?: string
   dataSource: string

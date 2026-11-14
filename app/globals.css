@@ -1604,6 +1604,7 @@ footer b{color:var(--cyan);}
 .help-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 16px 0; }
 .help-example { margin: 16px 0; padding: 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
 .help-example h4 { font-size: 18px; font-weight: 600; margin: 0 0 10px; color: var(--cyan); }
+.help-example h3 { color: var(--cyan); }
 .help-empty { padding: 24px; text-align: center; color: var(--text-muted); }
 .help-back-link { font-size: 16px; color: var(--text-secondary); text-decoration: none; margin-bottom: 16px; display: inline-block; }
 .help-back-link:hover { color: var(--cyan); text-decoration: underline; }
@@ -1611,11 +1612,31 @@ footer b{color:var(--cyan);}
 .help-privacy-link:hover { text-decoration: underline; opacity: 0.9; }
 .help-privacy-link:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 
+/* Help page typography - increased font size and darker colours for readability */
+.help-section p,
+.help-section ul li,
+.help-section dd {
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+.help-section p,
+.help-section ul li,
+.help-section dd {
+  color: #334155; /* primary explanatory text colour */
+}
+
+.help-section dt,
+.help-section strong {
+  color: #12161C; /* definition terms / strong text kept dark */
+}
+
 /* ===== PRIVACY PAGE ===== */
 .privacy-content { max-width: none; margin: 0 auto; padding: 0 16px; overflow-wrap: break-word; }
 .privacy-content h1 { font-size: 20px; margin: 0 0 12px; color: var(--text-primary); }
 .privacy-content h2 { font-size: 22px; margin: 20px 0 8px; color: var(--text-primary); }
-.privacy-content p { font-size: 16px; line-height: 1.6; color: var(--text-secondary); margin: 0 0 12px; }
+.privacy-content p { font-size: 22px; line-height: 1.6; color: var(--text-secondary); margin: 0 0 12px; }
+.privacy-content ul li { font-size: 22px; line-height: 1.6; color: var(--text-secondary); margin: 0 0 4px; }
 .privacy-content a { color: var(--cyan); }
 .privacy-content a:hover { text-decoration: underline; }
 .privacy-content code { font-family: 'Geist Mono', monospace; font-size: 16px; color: var(--text-secondary); }

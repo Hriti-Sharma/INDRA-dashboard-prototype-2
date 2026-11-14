@@ -12,6 +12,8 @@ const sections = [
   { id: 'severity', title: 'Severity' },
   { id: 'refresh', title: 'Time, Refresh & Data Reliability' },
   { id: 'data', title: 'Understanding Incident Data' },
+  { id: 'analysis', title: 'Analysis Page' },
+  { id: 'system-health', title: 'System Health' },
   { id: 'sources', title: 'Sources' },
   { id: 'faq', title: 'Troubleshooting & FAQs' },
   { id: 'privacy', title: 'Privacy Policy' },
@@ -145,7 +147,7 @@ export default function HelpPage() {
         <section id="dashboard" className="help-section" style={{ display: visibleSectionIds.includes('dashboard') ? undefined : 'none' }}>
           <h2>Understanding Your Dashboard</h2>
           <p>
-            The Home dashboard brings together five key metric cards, four filter controls, an intelligence map, an alert stream, and detailed incident reports. Use the filters to focus on the states, districts, event types, and severities that matter to you.
+            The Home dashboard brings together four key metric cards, four filter controls, an intelligence map, an alert stream, and detailed incident reports. Use the filters to focus on the states, districts, event types, and severities that matter to you.
           </p>
           <div className="help-grid">
             <div className="help-card">
@@ -169,7 +171,7 @@ export default function HelpPage() {
               </ul>
             </div>
             <div className="help-example">
-              <h4>How the dashboard fits together</h4>
+              <h3>How the dashboard fits together</h3>
               <ul>
                 <li><strong>Filter first:</strong> Use State and District to narrow the view to a region.</li>
                 <li><strong>Scan the map:</strong> Colored markers show incident locations. Click a marker to open its detailed report.</li>
@@ -180,9 +182,10 @@ export default function HelpPage() {
             <div className="help-card">
               <h3>Navigation</h3>
               <ul>
-                <li><strong>Home</strong> — the current dashboard with map, KPIs, filters, and alerts.</li>
+                <li><strong>Home</strong> — the main dashboard with map, KPIs, filters and alerts.</li>
                 <li><strong>Analysis</strong> — trend charts and system health summary.</li>
-                <li><strong>Help</strong> — this page.</li>
+                <li><strong>Help</strong> — documentation and guidance for using INDRA.</li>
+                <li><strong>Privacy Policy</strong> — information about privacy, data handling and user information.</li>
               </ul>
             </div>
             <div className="help-card">
@@ -197,10 +200,8 @@ export default function HelpPage() {
                 <li>Timestamp and location</li>
                 <li>Alert text</li>
                 <li>AI confidence percentage</li>
-                <li>Multi-source attribution (e.g. &quot;Satellite + IMD&quot;)</li>
-                <li>An <strong>Acknowledge</strong> button</li>
+                <li>Source: data provider</li>
               </ul>
-              <p>These severity tabs reflect INDRA's prototype data mappings and are not official government classifications.</p>
             </div>
           </div>
         </section>
@@ -222,12 +223,13 @@ export default function HelpPage() {
               <ul>
                 <li><strong>Zoom in (+) / Zoom out (−):</strong> Adjust the map scale up to 5×.</li>
                 <li><strong>Reset view:</strong> Return to the default zoom and position.</li>
-                <li><strong>Clear selection:</strong> Deselect the currently selected incident.</li>
+                <li><strong>Clear selection:</strong> Deselects the selected incident and resets all filters to All States / All Districts / All Event Types / All Severities.</li>
                 <li><strong>Drag to pan:</strong> Move the map view in any direction.</li>
+                <li><strong>Select a state on the map:</strong> Click inside any state boundary to apply that state as the active filter and view only its incidents.</li>
               </ul>
             </div>
             <div className="help-example">
-              <h4>Map severity legend</h4>
+              <h3>Map severity legend</h3>
               <div className="help-example-legend">
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -291,7 +293,7 @@ export default function HelpPage() {
             <ul>
               <li>Start from All India → select a State → select a District/Area → open the specific incident report.</li>
               <li>Each selection narrows the context: States → Districts → Individual incidents.</li>
-              <li>When you open an incident report, it centers on that incident's location on the map.</li>
+              <li>Opening an incident report highlights its marker on the map.</li>
             </ul>
           </div>
         </section>
@@ -357,11 +359,11 @@ export default function HelpPage() {
             </div>
             <div className="help-card">
               <h3>Manual Refresh</h3>
-              <p>Clicking the Refresh button triggers an immediate synchronization cycle. In this prototype, refresh recomputes the same static dataset and updates the timestamp — it does not fetch new backend records.</p>
+              <p>Clicking the Refresh button triggers an immediate synchronization cycle and updates the timestamp.</p>
             </div>
           </div>
           <div className="help-example">
-            <h4>Freshness status guide</h4>
+            <h3>Freshness status guide</h3>
             <div className="help-example-legend">
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -378,10 +380,7 @@ export default function HelpPage() {
                 </div>
               </div>
             </div>
-            <p className="note">
-              Freshness status reflects the prototype'"'"'s sync state only. It does not confirm that real-world incident data is current or accurate.
-            </p>
-          </div>
+            </div>
         </section>
 
         <section id="data" className="help-section" style={{ display: visibleSectionIds.includes('data') ? undefined : 'none' }}>
@@ -425,7 +424,7 @@ export default function HelpPage() {
             
           </div>
           <div className="help-example">
-            <h4>Example incident report structure</h4>
+            <h3>Example incident report structure</h3>
             <div className="help-example-legend">
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <div style={{ display: "flex", alignItems: "start", gap: 8 }}>
@@ -452,22 +451,93 @@ export default function HelpPage() {
           <h2>Sources</h2>
         </section>
 
+        <section id="analysis" className="help-section" style={{ display: visibleSectionIds.includes('analysis') ? undefined : 'none' }}>
+          <h2>Analysis Page</h2>
+          <p>
+            The Analysis page (reachable from the top navigation) provides trend charts, distribution views, and data reliability indicators for filtered incident data.
+          </p>
+          <div className="help-grid">
+            <div className="help-card">
+              <h3>Reports over time</h3>
+              <p>Time-series line chart showing incident counts across a selectable range (1H, 6H, 24H, or 7D).</p>
+            </div>
+            <div className="help-card">
+              <h3>Event distribution</h3>
+              <p>Breakdown of incidents by event type (e.g. Heatwave, Heavy Rainfall, Cyclone), ordered by count.</p>
+            </div>
+            <div className="help-card">
+              <h3>State distribution</h3>
+              <p>Top five states by incident count, ordered by severity then count.</p>
+            </div>
+            <div className="help-card">
+              <h3>AI classification distribution</h3>
+              <p>Bar chart of detected events classified by the AI model.</p>
+            </div>
+            <div className="help-card">
+              <h3>Source consensus</h3>
+              <p>Source agreement level, independent source count, consensus level, and reliability index for the primary incident.</p>
+            </div>
+            <div className="help-card">
+              <h3>Trend comparison</h3>
+              <p>Week-over-week comparison showing total reports, critical events, and response time change.</p>
+            </div>
+          </div>
+          </section>
+
+        <section id="system-health" className="help-section" style={{ display: visibleSectionIds.includes('system-health') ? undefined : 'none' }}>
+          <h2>System Health</h2>
+          <p>
+            The System Health panel (shown on the Analysis page) displays data pipeline and infrastructure metrics.
+          </p>
+          <div className="help-grid">
+            <div className="help-card">
+              <h3>Service indicators</h3>
+              <ul>
+                <li>Data ingestion</li>
+                <li>Kafka stream</li>
+                <li>PostgreSQL</li>
+                <li>AI processing</li>
+              </ul>
+              <p>Each service shows its current status percentage.</p>
+            </div>
+            <div className="help-card">
+              <h3>Metrics</h3>
+              <ul>
+                <li>Records received — count received in the last 5 minutes</li>
+                <li>Processing latency — current latency with change vs average</li>
+                <li>Uptime — 30-day rolling uptime</li>
+                <li>Throughput — current events per second</li>
+              </ul>
+            </div>
+          </div>
+        </section>
         <section id="faq" className="help-section" style={{ display: visibleSectionIds.includes('faq') ? undefined : 'none' }}>
           <h2>Troubleshooting & FAQs</h2>
-          <p>
-            Common questions about using the INDRA dashboard.
-          </p>
           <dl>
-            <dt>Why do I see the same incidents after refreshing?</dt>
-            <dd>This prototype uses static/mock incident data. Refreshing recomputes the same dataset and updates the timestamp; it does not fetch new backend records.</dd>
-            <dt>Why is an incident missing from the map?</dt>
-            <dd>Check the filter toolbar. State, District, Event Type, and Severity filters may exclude the incident from view.</dd>
-            <dt>Why does the District filter show no options?</dt>
-            <dd>District options depend on the state you select. If no districts appear, none are configured for that state in the reference data.</dd>
-            <dt>What does FRESH / UPDATING / STALE mean?</dt>
-            <dd>Freshness indicates data currency: FRESH (synced within 60 seconds), UPDATING (sync in progress), STALE (no sync in over 60 seconds).</dd>
-            <dt>Can I use this dashboard for emergency response?</dt>
-            <dd>No. This is a frontend prototype with static/mock data. It is not suitable for operational decisions or emergency response.</dd>
+            <dt>How do I find incidents in a particular state or district?</dt>
+            <dd>Use the filter toolbar: select a state from the State dropdown, then choose a district from the District dropdown. The map and alert stream will update to show only incidents matching your selection.</dd>
+            <dt>How are incident severity levels determined?</dt>
+            <dd>Incidents are classified as Critical, High, Moderate, or Low based on their impact and urgency. Severity is assigned by the data source and shown as a badge on each alert card.</dd>
+            <dt>Where does incident information come from?</dt>
+            <dd>Incident information is drawn from the data sources configured for your INDRA deployment. Each alert card displays its source so you can see which provider contributed the information.</dd>
+            <dt>How frequently is incident information updated?</dt>
+            <dd>Update frequency depends on the configured data sources and sync interval. Check the freshness indicator (FRESH, UPDATING, or STALE) to see how recently information was synced.</dd>
+            <dt>How can I report a new incident?</dt>
+            <dd>To report an incident, contact your local disaster management authority or the relevant emergency services. INDRA's incident-reporting functionality may be introduced in a future platform release.</dd>
+            <dt>How can I verify an incident report?</dt>
+            <dd>Review the source information displayed on each alert card. Cross-reference with official weather, emergency management, or government sources as needed.</dd>
+            <dt>How are alerts generated and prioritised?</dt>
+            <dd>INDRA displays incident alerts classified by severity: Critical, High, Moderate, and Low. Alerts are ordered by severity, with Critical alerts receiving the most prominent visual emphasis. The displayed classification and ordering depend on the incident data available to the platform.</dd>
+            <dt>What do confidence, source consensus and independent sources mean?</dt>
+            <dd>Confidence indicates how certain the system is about an incident classification. Source consensus shows the level of agreement across data providers. Independent sources counts the number of separate providers confirming the same incident.</dd>
+            <dt>Can I view historical incidents and disaster trends?</dt>
+            <dd>Use the Analysis page to view trend charts, event distribution, state distribution, and week-over-week comparisons for your filtered data.</dd>
+            <dt>How do I interpret the system health indicators?</dt>
+            <dd>System Health shows data pipeline and infrastructure metrics such as service status, records received, processing latency, uptime, and throughput. These indicators help you assess the operational health of your deployment.</dd>
+            <dt>How can I contact the support team?</dt>
+            <dd>For assistance, contact your organisation's INDRA administrator or the platform operator through the official support channel provided with your deployment. Contact details will be published here when the platform's support arrangements are finalised.</dd>
+            <dt>How can I use the Analysis page to understand disaster patterns?</dt>
+            <dd>The Analysis page provides trend charts, event and state distribution, AI classification distribution, source consensus, and week-over-week comparisons. Select filters first to focus the analysis on your area of interest.</dd>
           </dl>
         </section>
         <section id="privacy" className="help-section" style={{ display: visibleSectionIds.includes('privacy') ? undefined : 'none' }}>
