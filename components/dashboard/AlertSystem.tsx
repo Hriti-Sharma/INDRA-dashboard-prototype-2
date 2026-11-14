@@ -73,11 +73,11 @@ export default function AlertSystem({
         {filteredAlerts.map((alert) => {
           const incident = incidents.find(inc => inc.id === alert.incidentId)
           return (
-            <div
+            <button
+              type="button"
               className={`alert ${alert.sev}`}
               key={alert.incidentId}
               onClick={() => onAlertClick(alert.incidentId)}
-              style={{ cursor: 'pointer' }}
             >
               <div className="alert-line">
                 <span className={`severity-tag ${alert.sev}`}>{alert.sev}</span>
@@ -93,7 +93,7 @@ export default function AlertSystem({
                 </span>
               </div>
               <small className="source-note">Evidence: {alert.source}</small>
-            </div>
+            </button>
           )
         })}
       </div>

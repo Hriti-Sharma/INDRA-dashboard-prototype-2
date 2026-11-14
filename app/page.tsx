@@ -21,6 +21,7 @@ useEffect(() => {
   setLastSync(new Date())
 }, [])
   const [syncing, setSyncing] = useState<boolean>(false)
+  const [resetSignal, setResetSignal] = useState(0)
 
   const freshness: FreshnessState = computeFreshness(lastSync, syncing)
 
@@ -54,6 +55,12 @@ useEffect(() => {
     setSelectedId(incidentId)
   }
 
+  const handleResetFilters = () => {
+    reset()
+    setSelectedId(0)
+    setResetSignal((s) => s + 1)
+  }
+
   // Loading state: show a minimal loading indicator; no silent fallback to legacy data.
   if (loading) {
     return (
@@ -84,7 +91,7 @@ useEffect(() => {
         onRefresh={onRefresh}
       />
 
-      <FilterToolbar filters={filters} setFilter={setFilter} reset={reset} />
+      <FilterToolbar filters={filters} setFilter={setFilter} reset={handleResetFilters} />
 
       <LiveIntelligence
         incidents={filteredIncidents}
@@ -93,6 +100,7 @@ useEffect(() => {
         freshness={freshness}
         onSelect={setSelectedId}
         reset={reset}
+        resetSignal={resetSignal}
       />
 
       <KPISection incidents={filteredIncidents} />

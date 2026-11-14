@@ -28,6 +28,7 @@ export default function SelectedIncidentReport({
   navKey,
   onClose,
   onSelect,
+  resetSignal,
 }: {
   incident: Incident | null
   filteredIncidents: Incident[]
@@ -35,6 +36,7 @@ export default function SelectedIncidentReport({
   navKey: number
   onClose: () => void
   onSelect: (id: number) => void
+  resetSignal: number
 }) {
   
 
@@ -83,6 +85,12 @@ export default function SelectedIncidentReport({
       setSelectedDistrict(incident.district)
     }
   }, [incident?.id, navKey])
+
+  // Fix 4: Reset navigation when Reset Filters is clicked, regardless of filter values
+  useEffect(() => {
+    setSelectedState(null)
+    setSelectedDistrict(null)
+  }, [resetSignal])
 
   // Level 1: Group filtered incidents by state
   const stateGroups = filteredIncidents.reduce((acc, inc) => {
@@ -227,7 +235,8 @@ export default function SelectedIncidentReport({
           </div>
           {areaIncidents.length > 0 ? (
             areaIncidents.map(inc => (
-              <div
+              <button
+                type="button"
                 key={inc.id}
                 className={`report-card ${incident?.id === inc.id ? 'selected' : ''}`}
                 onClick={() => onSelect(inc.id)}
@@ -263,7 +272,7 @@ export default function SelectedIncidentReport({
                     </div>
                   </div>
                 </div>
-              </div>
+              </button>
             ))
           ) : (
             <div className="report-empty">

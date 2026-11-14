@@ -83,7 +83,7 @@
 
 /* ===== SEVERITY SELECT ===== */
 .severity-select-control {
-  background: var(--surface);
+  background: var(--card);
   border: 1px solid var(--border);
   color: var(--text-primary);
   border-radius: 4px;
@@ -94,6 +94,7 @@
   font-size: 16px;
   flex: 1;
   height: 40px;
+  position: relative;
 }
 
 .severity-select-input {
@@ -108,11 +109,15 @@
   cursor: pointer;
 }
 
-.severity-select-input:focus-visible { outline: none; }
+.severity-select-control:focus-within { outline: 2px solid var(--cyan); outline-offset: 1px; }
 
 .severity-select-chevron {
   color: var(--text-muted);
   flex-shrink: 0;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .severity-select-popup {
@@ -133,19 +138,18 @@
 
 .severity-select-item:hover,
 .severity-select-item[data-highlighted] {
-  background: var(--elevated);
+  background: var(--surface);
   color: var(--text-primary);
 }
 
 .severity-select-item[data-selected] {
   color: var(--cyan);
   font-weight: 600;
-  background: transparent;
 }
 
 /* Severity dropdown - light theme overrides */
 .light .severity-select-control {
-  background: #FFFFFF;
+  background: var(--card);
   border-color: var(--border);
   color: var(--text-primary);
 }
@@ -156,19 +160,20 @@
 }
 
 .light .severity-select-item {
-  background: #FFFFFF;
+  background: var(--surface);
   color: var(--text-primary);
 }
 
 .light .severity-select-item:hover,
 .light .severity-select-item[data-highlighted] {
-  background: var(--elevated);
+  background: var(--blue-tint);
   color: var(--text-primary);
 }
 
 .light .severity-select-item[data-selected] {
   background: var(--blue-selected);
-  color: var(--text-primary);
+  color: var(--cyan);
+  font-weight: 600;
 }
 /* ===== KPI ===== */
 .stats { display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px }
@@ -271,7 +276,7 @@
 
 /* ===== DETAILED REPORT CARDS ===== */
 .report-list { margin-top:12px; }
-.report-card { border:1px solid var(--border); border-radius:6px; margin-bottom:10px; background:var(--surface); overflow:hidden; }
+.report-card { border:1px solid var(--border); border-radius:6px; margin-bottom:10px; background:var(--surface); overflow:hidden; display: block; width: 100%; }
 .report-card.selected { border-color:var(--cyan); background:#123d4c; }
 .report-card-header { display:flex; justify-content:space-between; align-items:flex-start; padding:8px 12px; border-bottom:1px solid var(--border); }
 .report-card-header h3 { margin:0 0 4px; font-size:20px; color:var(--text-primary); }
@@ -282,6 +287,17 @@
 .report-card .ai-metrics.small .ai-metric { background:none; border:none; padding:0; flex:1; }
 .report-card .ai-metrics.small .ai-metric b { font-size:16px; }
 .report-card .ai-metrics.small .ai-metric small { font-size:14px; }
+
+.report-card { border:1px solid var(--border); border-radius:6px; margin-bottom:10px; background:var(--surface); overflow:hidden; display: block; width: 100%; }
+
+.report-card:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.district-item { display:flex; justify-content:space-between; gap:8px; padding:6px 12px; background:var(--surface); border:1px solid var(--border); border-radius:4px; margin-bottom:6px; font-size:14px; }
+
+.district-item b { color:var(--cyan); }
 
 /* ===== AI METRICS ===== */
 .ai-metrics { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
@@ -325,6 +341,19 @@
 .alert-tab[data-severity="moderate"].alert-tab--active { background: var(--alert-moderate); color: #07111f; border-bottom: 2px solid #07111f; }
 .alert-tab:hover:not(.alert-tab--active) { color:var(--cyan); background:var(--elevated); }
 .alert-tab:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+.alert {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+}
+
+.alert:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
 
 /* Alert System scoped severity tag colors (IMD-aligned) */
 .alerts-panel .severity-tag.critical { background: var(--alert-critical); }
@@ -1213,7 +1242,7 @@ footer b{color:var(--cyan);}
 }
 .light .severity-select-item[data-selected] {
   background: var(--blue-selected);
-  color: #FFFFFF;
+  color: var(--cyan);
   font-weight: 600;
 }
 .light .searchable-select-chevron {

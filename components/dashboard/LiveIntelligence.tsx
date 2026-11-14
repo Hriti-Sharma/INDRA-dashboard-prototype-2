@@ -15,6 +15,7 @@ export default function LiveIntelligence({
   onSelect,
   freshness,
   reset,
+  resetSignal,
 }: {
   incidents: Incident[]
   filters: FilterState
@@ -22,6 +23,7 @@ export default function LiveIntelligence({
   onSelect: (id: number) => void
   freshness: FreshnessState
   reset: () => void
+  resetSignal: number
 }) {
   const [navKey, setNavKey] = useState(0)
 
@@ -78,6 +80,7 @@ export default function LiveIntelligence({
           navKey={navKey}
           onClose={() => onSelect(0)}
           onSelect={handleSelect}
+          resetSignal={resetSignal}
         />
       </Panel>
     </div>
