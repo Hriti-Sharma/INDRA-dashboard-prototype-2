@@ -3,7 +3,14 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { type FilterState } from './FilterToolbar'
 import { StaticPrototypeDataSource } from '@/lib/data-source'
-import type { CanonicalIncident, CanonicalAlert, SourceRecord, PublicReport } from '@/lib/types'
+import { DemoAnalysisDataSource } from '@/lib/analysis-data-source'
+import type {
+  CanonicalIncident,
+  CanonicalAlert,
+  SourceRecord,
+  PublicReport,
+  AnalysisData,
+} from '@/lib/types'
 import { adaptIncidentToDashboard, adaptAlertToDashboard } from '@/lib/data-source'
 import type { Incident, Alert } from '@/lib/types'
 
@@ -14,20 +21,34 @@ type FilterContextValue = {
   filteredIncidents: Incident[]
   filteredAlerts: Alert[]
   filteredReports: PublicReport[]
+  filteredCanonicalIncidentIds: string[]
+  analysisData: AnalysisData | null
   loading: boolean
   error: Error | null
+  analysisLoading: boolean
+  analysisError: Error | null
 }
 
 const FilterContext = createContext<FilterContextValue | null>(null)
 
 export function FilterProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFilter, reset] = useFilterState()
-  const [data, setData] = useState<{ incidents: Incident[]; alerts: Alert[]; sourceRecords: SourceRecord[] } | null>(null)
+  const [data, setData] = useState<{
+    incidents: Incident[]
+    alerts: Alert[]
+    sourceRecords: SourceRecord[]
+    canonicalIncidents: CanonicalIncident[]
+  } | null>(null)
+  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
+  const [analysisLoading, setAnalysisLoading] = useState(true)
+  const [analysisError, setAnalysisError] = useState<Error | null>(null)
 
   const dataSource = new StaticPrototypeDataSource('@/test-data/indra-prototype.json')
+  const analysisDataSource = new DemoAnalysisDataSource()
 
+  // Incident/alert/report loading - independent of analysis data
   useEffect(() => {
     let cancelled = false
     dataSource
@@ -38,7 +59,7 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
         const incidents = dataset.incidents.map(inc => adaptIncidentToDashboard(inc, idMap))
         const alerts = dataset.alerts.map(alert => adaptAlertToDashboard(alert, idMap))
         const sourceRecords = dataset.sourceRecords
-        setData({ incidents, alerts, sourceRecords })
+        setData({ incidents, alerts, sourceRecords, canonicalIncidents: dataset.incidents })
         setLoading(false)
       })
       .catch(err => {
@@ -49,8 +70,41 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
     return () => { cancelled = true }
   }, [])
 
+  // Analysis data loading - independent of incident data
+  useEffect(() => {
+    let cancelled = false
+    analysisDataSource
+      .loadAnalysisData()
+      .then(analysis => {
+        if (cancelled) return
+        setAnalysisData(analysis)
+        setAnalysisLoading(false)
+      })
+      .catch(err => {
+        if (cancelled) return
+        setAnalysisError(err)
+        setAnalysisLoading(false)
+      })
+    return () => { cancelled = true }
+  }, [])
+
+  // Build canonical ID lookup from the raw canonical dataset for filter-matching
+  const canonicalIdMap = data ? buildIdMap(data.canonicalIncidents) : new Map()
+  const dashboardIdToCanonicalId = new Map(
+    Array.from(canonicalIdMap.entries()).map(([canonicalId, numericId]) => [
+      numericId,
+      canonicalId,
+    ])
+  )
+
   const filteredIncidents = data
     ? data.incidents.filter(inc => matchesFilters(inc, filters))
+    : []
+
+  const filteredCanonicalIncidentIds = data
+    ? filteredIncidents
+        .map(inc => dashboardIdToCanonicalId.get(inc.id))
+        .filter((id): id is string => id !== null)
     : []
 
   const filteredAlerts = data
@@ -81,8 +135,12 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
         filteredIncidents,
         filteredAlerts,
         filteredReports,
+        filteredCanonicalIncidentIds,
+        analysisData,
         loading,
         error,
+        analysisLoading,
+        analysisError,
       }}
     >
       {children}

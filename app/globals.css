@@ -509,7 +509,7 @@
 .chart-legend{display:flex;flex-wrap:wrap;gap:12px;padding:4px 16px 10px;font-size:14px;color:#829aab;}
 .cyan{color:var(--cyan)}.blue{color:var(--blue)}.orange{color:var(--amber)}.red{color:var(--red)}.green{color:var(--green)}.purple{color:var(--purple)}
 .line-chart{height:210px;margin:0 16px 28px;position:relative;border-bottom:1px solid var(--border);border-left:1px solid var(--border);}
-.line-chart.small{height:140px;margin-top:8px;}
+.line-chart.small{height:auto;min-height:140px;margin-top:8px;}
 
 /* Full-width trend panel - tighter chart height */
 .trend-panel-full .line-chart{height:200px;}

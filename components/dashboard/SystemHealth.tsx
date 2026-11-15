@@ -2,11 +2,7 @@
 
 import { Bot, Database, Layers3, Radio } from 'lucide-react'
 import Panel from './Panel'
-
-export interface SystemHealthService {
-  name: string
-  status: string
-}
+import type { SystemHealthService } from '@/lib/types'
 
 export interface SystemHealthMetrics {
   services?: SystemHealthService[]
@@ -16,22 +12,20 @@ export interface SystemHealthMetrics {
   throughput?: string
 }
 
-const DEMO_METRICS: SystemHealthMetrics = {
-  services: [
-    { name: 'Data ingestion', status: '99.9%' },
-    { name: 'Kafka stream', status: '99.9%' },
-    { name: 'PostgreSQL', status: '99.9%' },
-    { name: 'AI processing', status: '99.9%' },
-  ],
-  recordsReceived: '12,480',
-  processingLatency: '240 ms',
-  uptime: '99.97%',
-  throughput: '2,486/s',
-}
-
 export default function SystemHealth({ metrics }: { metrics?: SystemHealthMetrics } = {}) {
-  const m = { ...DEMO_METRICS, ...metrics }
-  const services: SystemHealthService[] = m.services ?? DEMO_METRICS.services!
+  const m = metrics ?? {
+    services: [
+      { name: 'Data ingestion', status: '—' },
+      { name: 'Kafka stream', status: '—' },
+      { name: 'PostgreSQL', status: '—' },
+      { name: 'AI processing', status: '—' },
+    ],
+    recordsReceived: '—',
+    processingLatency: '—',
+    uptime: '—',
+    throughput: '—',
+  }
+  const services: SystemHealthService[] = m.services ?? []
 
   return (
     <Panel
@@ -63,7 +57,7 @@ export default function SystemHealth({ metrics }: { metrics?: SystemHealthMetric
         <div className="health-stat">
           <span>PROCESSING LATENCY</span>
           <b>{m.processingLatency}</b>
-          <small className="up">−18% vs avg</small>
+          <small className="up">—</small>
         </div>
       </div>
       <div className="health-extra">

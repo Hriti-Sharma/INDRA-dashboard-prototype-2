@@ -1,21 +1,21 @@
 ﻿'use client'
 
 import { useState, useMemo } from 'react'
-import { Bot } from 'lucide-react'
 import Panel from './Panel'
 import { Bars, Donut } from './Charts'
 import SystemHealth from './SystemHealth'
-import {
-  sourcesData,
-  aiClassificationData,
-  aiRiskRows,
-  incidents,
-} from '@/lib/data'
 import type { PublicReport } from '@/lib/types'
 import { useSharedFilters } from './FilterContext'
 
-export default function AnalysisView() {
-  const { filteredReports, filteredIncidents } = useSharedFilters()
+export default function AnalysisView({ selectedIncidentId }: { selectedIncidentId?: string | null } = {}) {
+  const {
+    filteredReports,
+    filteredIncidents,
+    filteredCanonicalIncidentIds,
+    analysisData,
+    analysisLoading,
+    analysisError,
+  } = useSharedFilters()
   const [range, setRange] = useState<'1H' | '6H' | '24H' | '7D'>('24H')
 
   const IST = 'Asia/Kolkata'
@@ -75,8 +75,32 @@ export default function AnalysisView() {
     }
     return Array.from(counts.entries())
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
   }, [filteredIncidents])
+
+  const sourceDistribution = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const report of filteredReports) {
+      const source = report.source.trim()
+      if (!source) continue
+      counts.set(source, (counts.get(source) || 0) + 1)
+    }
+    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1])
+  }, [filteredReports])
+
+  const filteredAIRiskAssessments = useMemo(() => {
+    if (!analysisData?.aiRiskAssessments) return []
+    return analysisData.aiRiskAssessments.filter(a =>
+      filteredCanonicalIncidentIds.includes(a.canonicalIncidentId)
+    )
+  }, [analysisData?.aiRiskAssessments, filteredCanonicalIncidentIds])
+
+  const filteredAIClassification = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const a of filteredAIRiskAssessments) {
+      counts.set(a.event, (counts.get(a.event) || 0) + 1)
+    }
+    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1])
+  }, [filteredAIRiskAssessments])
 
   const xLabels = useMemo(() => {
     const { count: bucketCount, interval } = bucketConfig
@@ -91,7 +115,10 @@ export default function AnalysisView() {
   const maxCount = Math.max(1, ...timeSeriesData.map(d => d.count))
   const totalReports = timeSeriesData.reduce((s, d) => s + d.count, 0)
 
-  const primaryIncident = incidents[0]
+  const selectedIncident = selectedIncidentId != null
+    ? filteredIncidents.find(() => filteredCanonicalIncidentIds.includes(selectedIncidentId))
+    : null
+  const filterMismatch = selectedIncidentId != null && !selectedIncident
 
   return (
     <main className="dashboard">
@@ -100,6 +127,7 @@ export default function AnalysisView() {
           <span className="eyebrow">ANALYTICS LAYER</span>
           <h2>Incident activity &amp; distribution</h2>
         </div>
+<span className="demo-tag">Sample data</span>
       </div>
 
       <div className="analytics-grid">
@@ -227,8 +255,12 @@ export default function AnalysisView() {
         </Panel>
 
         <Panel title="Reports by source" eyebrow="INGESTION MIX">
-          <Donut data={sourcesData} />
-        </Panel>
+  {sourceDistribution.length > 0 ? (
+    <Donut data={sourceDistribution.map((d) => [d[0], d[1]])} />
+  ) : (
+    <p className="caption">No source distribution data available.</p>
+  )}
+</Panel>
 <Panel title="Incidents by state" eyebrow="TOP 5 · ACTIVE INCIDENTS">
 
           {stateDistribution.length > 0 ? (
@@ -238,98 +270,169 @@ export default function AnalysisView() {
           )}
         </Panel>
 <Panel title="AI risk intelligence" eyebrow="MODEL STATUS · EVENT CLASSIFICATION">
-
-          
-          <div className="ai-list">
-            {aiRiskRows.map((x) => (
-              <div className="ai-row" key={x[1]}>
-                <div className="ai-icon">
-                  <Bot size={14} />
-                </div>
-                <div className="ai-info">
-                  <div className="ai-event">{x[0]}</div>
-                  <div className="ai-location">{x[1]}</div>
-                </div>
-                <div className="ai-severity">{x[2]}</div>
-                <div className="ai-reports">{x[4]} reports</div>
-                <div className="ai-confidence">{x[3]}</div>
-              </div>
-            ))}
+  {filteredAIRiskAssessments.length > 0 ? (
+    <div className="ai-list">
+      {filteredAIRiskAssessments.map((row) => (
+        <div className="ai-row" key={row.canonicalIncidentId}>
+          <div className="ai-icon">
+            <span className="demo-tag">AI</span>
           </div>
-        </Panel>
-
-        <Panel title="AI classification distribution" eyebrow="DETECTED EVENTS">
-          <div className="classification-bars">
-            <Bars data={aiClassificationData as [string, number][]} color="blue" />
+          <div className="ai-info">
+            <div className="ai-event">{row.event}</div>
+            <div className="ai-location">{row.location}</div>
           </div>
-        </Panel>
+          <div className="ai-severity">{row.severity}</div>
+          <div className="ai-reports">{row.reports} reports</div>
+          <div className="ai-confidence">{row.confidence}</div>
+          <div className="ai-status">{row.status}</div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="caption">No AI risk assessments available.</p>
+  )}
+</Panel>
 
-        {primaryIncident && (
-          <Panel title="Data reliability & source consensus" eyebrow="EVIDENCE LAYER">
-            <div className="consensus-detail">
-              <div className="consensus-row">
-                <span className="eyebrow">SOURCE AGREEMENT</span>
-                <div className="consensus-track">
-                  <i style={{ width: '84%' }} />
-                </div>
-                <b>84% agreement</b>
-              </div>
-              <div className="consensus-row">
-                <span className="eyebrow">INDEPENDENT SOURCES</span>
-                <b>{primaryIncident.independentSources} active</b>
-              </div>
-              <div className="consensus-row">
-                <span className="eyebrow">CONSENSUS LEVEL</span>
-                <b className="green">{primaryIncident.consensus}</b>
-              </div>
-              <div className="consensus-row">
-                <span className="eyebrow">RELIABILITY INDEX</span>
-                <b>92.4 / 100</b>
-              </div>
-              <div className="consensus-note">
-                <p>
-                  Source consensus measures agreement across independent data providers. AI confidence
-                  measures model certainty in classification. These are distinct metrics and should not
-                  be conflated.
-                </p>
-              </div>
-            </div>
-          </Panel>
+<Panel title="Incident event distribution" eyebrow="EVENT TYPES">
+  {filteredAIClassification.length > 0 ? (
+    <div className="classification-bars">
+      <Bars data={filteredAIClassification.map((d) => [d[0], d[1]])} color="blue" />
+    </div>
+  ) : (
+    <p className="caption">No AI classification data available.</p>
+  )}
+</Panel>
+
+<Panel title="Data reliability & source consensus" eyebrow="EVIDENCE LAYER">
+  <div className="consensus-detail">
+    {analysisData?.consensus ? (
+      <>
+        <div className="consensus-row">
+          <span className="eyebrow">SOURCE AGREEMENT</span>
+          <b>{analysisData.consensus.sourceAgreement}%</b>
+        </div>
+        <div className="consensus-row">
+          <span className="eyebrow">INDEPENDENT SOURCES</span>
+          <b>{analysisData.consensus.independentSources}</b>
+        </div>
+        <div className="consensus-row">
+          <span className="eyebrow">CONSENSUS LEVEL</span>
+          <b className="green">{analysisData.consensus.consensusLevel}</b>
+        </div>
+        <div className="consensus-row">
+          <span className="eyebrow">RELIABILITY INDEX</span>
+          <b>{analysisData.consensus.reliabilityIndex} / 100</b>
+        </div>
+        {selectedIncidentId && analysisData.incidentConsensusById?.[selectedIncidentId] ? (
+          <div className="consensus-row">
+            <span className="eyebrow">INCIDENT ASSESSMENT</span>
+            <p>Incident-specific consensus available for selected incident.</p>
+          </div>
+        ) : null}
+        {filterMismatch && (
+          <div className="consensus-row">
+            <span className="eyebrow">SELECTED INCIDENT</span>
+            <p>The selected incident is not visible under the current filters.</p>
+          </div>
         )}
+        <div className="consensus-note">
+          <p>
+            Source consensus measures agreement across independent data providers. AI confidence
+            measures model certainty in classification. These are distinct metrics and should not
+            be conflated.
+          </p>
+        </div>
+      </>
+    ) : (
+      <>
+        <div className="consensus-row">
+          <span className="eyebrow">SOURCE AGREEMENT</span>
+          <b>—</b>
+        </div>
+        <div className="consensus-row">
+          <span className="eyebrow">INDEPENDENT SOURCES</span>
+          <b>—</b>
+        </div>
+        <div className="consensus-row">
+          <span className="eyebrow">CONSENSUS LEVEL</span>
+          <b className="green">—</b>
+        </div>
+        <div className="consensus-row">
+          <span className="eyebrow">RELIABILITY INDEX</span>
+          <b>—</b>
+        </div>
+        {filterMismatch && (
+          <div className="consensus-row">
+            <span className="eyebrow">SELECTED INCIDENT</span>
+            <p>The selected incident is not visible under the current filters.</p>
+          </div>
+        )}
+        <div className="consensus-note">
+          <p>
+            Source consensus measures agreement across independent data providers. AI confidence
+            measures model certainty in classification. These are distinct metrics and should not
+            be conflated.
+          </p>
+        </div>
+      </>
+    )}
+  </div>
+</Panel>
 
-        <Panel title="Historical trend analysis" eyebrow="7-DAY COMPARISON">
-          <div className="trend-comparison">
-            <div className="trend-stat">
-              <b className="cyan">+12.8%</b>
-              <small>WEEK-OVER-WEEK</small>
-            </div>
-            <div className="trend-stat">
-              <b>128,450</b>
-              <small>TOTAL REPORTS (7D)</small>
-            </div>
-            <div className="trend-stat">
-              <b className="red">8</b>
-              <small>CRITICAL EVENTS</small>
-            </div>
-            <div className="trend-stat">
-              <b className="green">−18%</b>
-              <small>RESPONSE TIME</small>
-            </div>
-          </div>
-          <div className="line-chart small">
-            <svg viewBox="0 0 700 140" preserveAspectRatio="none" role="img" aria-label="7-day trend comparison">
-              <path
-                className="area"
-                d="M0 120 C60 110 80 80 140 95 S200 60 260 85 S320 50 380 70 S440 30 500 55 S560 20 620 40 L700 30 L700 140 L0 140Z"
-              />
-              <path className="line" d="M0 120 C60 110 80 80 140 95 S200 60 260 85 S320 50 380 70 S440 30 500 55 S560 20 620 40 L700 30" />
-              <path className="line secondary" d="M0 130 C60 125 80 110 140 118 S200 95 260 108 S320 85 380 95 S440 75 500 88 S560 70 620 80 L700 75" />
-            </svg>
-          </div>
-        </Panel>
+        <Panel title="Historical trend analysis" eyebrow="7-DAY COMPARISON · ALL INDIA">
+  {analysisData?.historicalTrends ? (
+    <>
+      <div className="trend-comparison">
+        <div className="trend-stat">
+          <b className="cyan">{analysisData.historicalTrends.metrics[0]?.value ?? '—'}</b>
+          <small>{analysisData.historicalTrends.metrics[0]?.label ?? 'WEEK-OVER-WEEK'}</small>
+        </div>
+        <div className="trend-stat">
+          <b>{analysisData.historicalTrends.metrics[1]?.value ?? '—'}</b>
+          <small>{analysisData.historicalTrends.metrics[1]?.label ?? 'TOTAL REPORTS (7D)'}</small>
+        </div>
+        <div className="trend-stat">
+          <b className="red">{analysisData.historicalTrends.metrics[2]?.value ?? '—'}</b>
+          <small>{analysisData.historicalTrends.metrics[2]?.label ?? 'CRITICAL EVENTS'}</small>
+        </div>
+        <div className="trend-stat">
+          <b className="green">{analysisData.historicalTrends.metrics[3]?.value ?? '—'}</b>
+          <small>{analysisData.historicalTrends.metrics[3]?.label ?? 'RESPONSE TIME'}</small>
+        </div>
+      </div>
+      <div className="line-chart small">
+        <Bars data={analysisData.historicalTrends.timeSeries.map((p) => [p.x, p.y])} color="cyan" />
+      </div>
+    </>
+  ) : (
+    <>
+      <div className="trend-comparison">
+        <div className="trend-stat">
+          <b className="cyan">—</b>
+          <small>WEEK-OVER-WEEK</small>
+        </div>
+        <div className="trend-stat">
+          <b>—</b>
+          <small>TOTAL REPORTS (7D)</small>
+        </div>
+        <div className="trend-stat">
+          <b className="red">—</b>
+          <small>CRITICAL EVENTS</small>
+        </div>
+        <div className="trend-stat">
+          <b className="green">—</b>
+          <small>RESPONSE TIME</small>
+        </div>
+      </div>
+      <div className="line-chart small">
+        <p className="caption">No trend data available.</p>
+      </div>
+    </>
+  )}
+</Panel>
       </div>
 
-      <SystemHealth />
+      <SystemHealth metrics={analysisData?.systemHealth ?? undefined} />
 
       <footer>
         <span>INDRA · v3.0.0</span>

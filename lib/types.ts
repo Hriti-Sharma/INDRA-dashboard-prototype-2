@@ -179,3 +179,81 @@ export interface PrototypeDataset {
   sourceRecords: SourceRecord[]
   alerts: CanonicalAlert[]
 }
+
+/* ===== Analysis data contracts (backend-ready) ===== */
+
+export type AssessmentStatus = 'pending' | 'processing' | 'success' | 'failed' | 'unavailable'
+
+export interface SourceDistributionEntry {
+  source: string
+  count: number
+}
+
+export interface AIClassificationEntry {
+  eventType: string
+  count: number
+}
+
+export interface AIRiskAssessment {
+  canonicalIncidentId: string
+  event: string
+  location: string
+  severity: Severity
+  confidence: string
+  reports: number
+  status: AssessmentStatus
+  modelVersion: string
+  assessedAt: string
+}
+
+export interface ConsensusAssessment {
+  canonicalIncidentId?: string        // undefined = national overview
+  sourceAgreement: number
+  independentSources: number
+  consensusLevel: 'High' | 'Medium' | 'Low'
+  reliabilityIndex: number
+  status: AssessmentStatus
+  modelVersion: string
+  assessedAt: string
+}
+
+export interface TrendMetric {
+  label: string
+  value: string
+  tone: string
+}
+
+export interface TimeSeriesPoint {
+  x: string
+  y: number
+}
+
+export interface HistoricalTrends {
+  metrics: TrendMetric[]
+  timeSeries: TimeSeriesPoint[]
+  status: AssessmentStatus
+}
+
+export interface SystemHealthService {
+  name: string
+  status: string
+}
+
+export interface SystemHealthTelemetry {
+  services: SystemHealthService[]
+  recordsReceived: string
+  processingLatency: string
+  uptime: string
+  throughput: string
+}
+
+export interface AnalysisData {
+  sourceDistribution: SourceDistributionEntry[]
+  aiClassification: AIClassificationEntry[]
+  aiRiskAssessments: AIRiskAssessment[]
+  consensus: ConsensusAssessment
+  incidentConsensusById: Record<string, ConsensusAssessment>
+  historicalTrends: HistoricalTrends
+  systemHealth: SystemHealthTelemetry
+  status: AssessmentStatus
+}
