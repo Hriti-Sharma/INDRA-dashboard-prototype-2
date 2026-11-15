@@ -1607,7 +1607,7 @@ footer b{color:var(--cyan);}
 .help-search-reset { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: 0; color: var(--text-muted); cursor: pointer; padding: 4px; line-height: 1; }
 .help-search-reset:hover { color: var(--cyan); }
 .help-search-reset:disabled { opacity: 0.5; cursor: not-allowed; }
-.help-sticky-nav { position: sticky; top: 170px; align-self: flex-start; }
+.help-sticky-nav { position: sticky; top: 150px; align-self: flex-start; z-index: 5; max-height: 85vh; overflow-y: auto; }
 .help-sticky-list { display: flex; flex-direction: column; gap: 6px; }
 .help-nav-item { padding: 8px 12px; font-size: 16px; font-weight: 600; letter-spacing: .5px; color: var(--text-secondary); text-decoration: none; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); white-space: normal; line-height: 1.4; transition: all .15s; }
 .help-nav-item:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
@@ -1615,7 +1615,7 @@ footer b{color:var(--cyan);}
 .help-nav-item--active { color: var(--cyan); border-color: var(--cyan); background: rgba(53, 213, 232, 0.1); }
 .help-content { display: flex; gap: 24px; }
 .help-body { flex: 1; min-width: 0; max-width: none; }
-.help-section { margin-bottom: 32px; padding: 20px; padding-bottom: 24px; border: 1px solid var(--border); border-bottom: 1px solid var(--border-subtle); background: var(--card); }
+.help-section { margin-bottom: 32px; padding: 20px; padding-bottom: 24px; border: 1px solid var(--border); border-bottom: 1px solid var(--border-subtle); background: var(--card); scroll-margin-top: 100px; }
 .help-section:last-child { border-bottom: 0; }
 .help-section h2 { font-size: 20px; margin: 0 0 12px; color: var(--text-primary); border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 .help-section h3 { font-size: 20px; margin: 0 0 8px; color: var(--text-secondary); }
@@ -1678,7 +1678,7 @@ footer b{color:var(--cyan);}
 @media (max-width: 650px) {
   .help-page { padding: 0 12px; }
   .help-nav { width: 100%; }
-  .help-content { flex-direction: column; gap: 0; }
+  .help-content { flex-direction: column; gap: 0; padding-left: 0; }
   .help-sticky-nav { position: static; width: 100%; min-width: 0; top: auto; }
   .help-sticky-list { flex-direction: row; overflow-x: auto; gap: 8px; padding-bottom: 8px; scrollbar-width: thin; scrollbar-color: var(--text-muted) transparent; }
   .help-sticky-list::-webkit-scrollbar { height: 6px; }

@@ -12,9 +12,10 @@ const sections = [
   { id: 'severity', title: 'Severity' },
   { id: 'refresh', title: 'Time, Refresh & Data Reliability' },
   { id: 'data', title: 'Understanding Incident Data' },
+  { id: 'sources', title: 'Sources' },
   { id: 'analysis', title: 'Analysis Page' },
   { id: 'system-health', title: 'System Health' },
-  { id: 'sources', title: 'Sources' },
+  { id: 'keyboard-accessibility', title: 'Keyboard Accessibility' },
   { id: 'faq', title: 'Troubleshooting & FAQs' },
   { id: 'privacy', title: 'Privacy Policy' },
 ]
@@ -70,7 +71,7 @@ export default function HelpPage() {
           setActiveSection(visible[0].target.id)
         }
       },
-      { threshold: 0.5, rootMargin: '-140px 0% -30% 0%' }
+      { threshold: 0.1, rootMargin: '-140px 0% -30% 0%' }
     )
     const elements = document.querySelectorAll('.help-section')
     elements.forEach(el => observer.observe(el))
@@ -511,6 +512,88 @@ export default function HelpPage() {
             </div>
           </div>
         </section>
+        <section id="keyboard-accessibility" className="help-section" style={{ display: visibleSectionIds.includes('keyboard-accessibility') ? undefined : 'none' }}>
+          <h2>Keyboard Accessibility</h2>
+          <p>
+            INDRA can be operated using only a keyboard. The sections below describe how to navigate and interact
+            with the dashboard without a mouse. All interactive elements follow standard browser keyboard behaviour;
+            no custom keyboard shortcuts are required.
+          </p>
+          <div className="help-grid">
+            <div className="help-card">
+              <h3>Tab and Shift + Tab Navigation</h3>
+              <p>
+                Press <strong>Tab</strong> to move forward through interactive elements — links, buttons, and form
+                controls — in page order. Press <strong>Shift + Tab</strong> to move backward. The currently focused
+                element is shown with a visible focus outline. This applies to the top navigation, filter toolbar,
+                alert tabs, theme toggle, refresh button, help navigation links, and search input.
+              </p>
+            </div>
+            <div className="help-card">
+              <h3>Enter and Space to Activate</h3>
+              <p>
+                Press <strong>Enter</strong> to activate links and buttons. Press <strong>Enter</strong> or
+                <strong>Space</strong> to activate buttons such as Refresh, theme toggle, and alert severity tabs.
+                This is standard browser behaviour for <code>&lt;button&gt;</code> and <code>&lt;a&gt;</code>
+                elements; no custom shortcuts are involved.
+              </p>
+            </div>
+            <div className="help-card">
+              <h3>Dropdown and Filter Selection</h3>
+              <p>
+                State, District, Event Type, and Severity filters use searchable dropdowns. Press <strong>Tab</strong>
+                to reach a dropdown input, then use arrow keys to move through options and <strong>Enter</strong> to
+                select one. You can also type to filter the displayed options. The Severity dropdown opens its list of
+                options when focused and accepts the same keyboard interaction.
+              </p>
+            </div>
+            <div className="help-card">
+              <h3>Page Navigation</h3>
+              <p>
+                Use the top navigation bar to move between Home, Analysis, Help, and Privacy. Each navigation link is
+                a standard link: <strong>Tab</strong> to reach it, <strong>Enter</strong> to open it. The Help page
+                also has an in-page section navigation list on the left; <strong>Tab</strong> moves through the links
+                and <strong>Enter</strong> jumps to that section.
+              </p>
+            </div>
+            <div className="help-card">
+              <h3>Theme Toggle</h3>
+              <p>
+                The theme switcher in the top bar is a button. Press <strong>Tab</strong> to reach it, then
+                <strong>Enter</strong> or <strong>Space</strong> to switch between light and dark themes. The current
+                theme is remembered for your next visit.
+              </p>
+            </div>
+            <div className="help-card">
+              <h3>Alert Tabs</h3>
+              <p>
+                The Alert System uses three severity tabs — Red (Critical), Orange (High), and Yellow (Moderate).
+                Press <strong>Tab</strong> to reach the tab group, arrow keys to move between tabs, and
+                <strong>Enter</strong> or <strong>Space</strong> to select a tab. The active tab shows which severity
+                level is currently displayed.
+              </p>
+            </div>
+          </div>
+          <div className="help-card">
+            <h3>Map and Incident Markers</h3>
+            <p>
+              The intelligence map is an SVG graphic. Incident markers are positioned by latitude and longitude and can
+              be selected by <strong>clicking</strong> with a mouse. Keyboard selection of individual map markers is
+              <strong>not</strong> currently supported — markers are not keyboard-focusable and do not respond to
+              arrow keys. To view incident details without using the map, use the filter toolbar to narrow the view and
+              read the alert stream instead, or navigate to the Analysis page for trend and distribution views.
+            </p>
+          </div>
+          <div className="help-card">
+            <h3>Escape Key</h3>
+            <p>
+              The Escape key has no dedicated function in the current version of INDRA. There are no modals or
+              overlays that require dismissal. If a dropdown list is open, pressing <strong>Escape</strong> will close
+              it through standard browser behaviour for searchable inputs.
+            </p>
+          </div>
+        </section>
+
         <section id="faq" className="help-section" style={{ display: visibleSectionIds.includes('faq') ? undefined : 'none' }}>
           <h2>Troubleshooting & FAQs</h2>
           <dl>
